@@ -218,20 +218,6 @@ export default function PoetryStudio() {
           字体试览 ↗
         </a>
       </header>
-      <section className="intro">
-        <div>
-          <div className="eyebrow">文字实验室</div>
-          <h1>
-            在旧文字里，
-            <br className="mobile-break" />
-            遇见<span>新诗。</span>
-          </h1>
-        </div>
-        <div className="intro-mark" aria-hidden="true">
-          字<span>里</span>行<span>间</span>
-          <small>另有天地</small>
-        </div>
-      </section>
       <div className="studio-layout">
         <aside className="article-sidebar" aria-label="文章侧栏">
           <button className="new-article" onClick={() => setEditing(true)}>
@@ -264,6 +250,21 @@ export default function PoetryStudio() {
           </nav>
         </aside>
         <div className="studio-main">
+          <section className="intro">
+            <div>
+              <div className="eyebrow">文字实验室</div>
+              <h1>
+                在旧文字里，
+                <br className="mobile-break" />
+                遇见<span>新诗。</span>
+              </h1>
+            </div>
+            <div className="intro-mark" aria-hidden="true">
+              字<span>里</span>行<span>间</span>
+              <small>另有天地</small>
+            </div>
+          </section>
+
           <section className="article-picker" aria-label="创作工具栏">
             <button disabled={!ready} onClick={() => setPreviewing(true)}>
               预览
