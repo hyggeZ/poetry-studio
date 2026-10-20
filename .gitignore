@@ -1,0 +1,11 @@
+node_modules/
+.npm-cache/
+.next/
+out/
+*.tsbuildinfo
+.env*
+!.env.example
+
+# 本地验收截图
+preview*.png
+font-preview*.png
