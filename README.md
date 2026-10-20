@@ -1,6 +1,8 @@
 # 拾字成诗
 
-从古诗文或自定义文章中拾取文字，重新排列成自己的诗。
+从古诗文、现代诗或自定义文章中拾取文字，重新排列成自己的诗。
+
+[打开网页](https://hyggez.github.io/poetry-studio/)
 
 ## 技术
 
@@ -31,11 +33,29 @@ npm start      # 启动生产服务
 - 原文可独立滚动，滚动条仅在滚动时显示；顶栏字体选择同时应用于原文和纸片。
 - `/fonts` 查看本机字体及四款开源候选的字形对比；候选仅提供样例字形，未安装至系统。
 - 本地字体依赖浏览设备已安装对应字体，缺失时回退到宋体或系统衬线字体。
+- 内置《再别康桥》《偶然》《雨巷》《教我如何不想她》《死水》等现代诗，原文来源见 [诗作来源](docs/poem-sources.md)。
+- 自定义文章、草稿和配色仅保存在当前浏览器；刷新或再次访问会恢复，不会上传到 GitHub。更换设备、浏览器或网址不会同步，清除网站数据会删除存档。
+
+## 静态部署
+
+GitHub Pages 使用 GitHub Actions 发布，推送到 `develop` 后自动构建并上线。仓库 Settings → Pages 的 Source 选择 GitHub Actions。
+
+本地生成与线上相同的静态文件（PowerShell）：
+
+```powershell
+$env:GITHUB_PAGES = "true"
+npm run build
+Remove-Item Env:GITHUB_PAGES
+```
+
+产物位于 `out/`，部署路径为 `/poetry-studio/`。静态站无需后端或数据库，支持自定义文字、拖动排版、图片预览与下载。
 
 ## 工作文件树
 
 ```text
 poetry-studio/
+├── .github/workflows/pages.yml # 自动发布
+├── docs/poem-sources.md        # 现代诗来源
 ├── public/font-previews/        # 候选字体样例与授权
 ├── src/
 │   ├── app/
@@ -50,6 +70,7 @@ poetry-studio/
 │   │   └── image-preview.tsx   # 图片预览、范围切换与保存
 │   ├── data/
 │   │   ├── articles.ts        # 内置文章与正文分字
+│   │   ├── modern-poems.ts    # 公版现代诗
 │   │   ├── chibi.ts           # 赤壁赋与初始示例
 │   │   ├── fonts.ts           # 本机字体选项
 │   │   └── palettes.ts        # 成套配色与随机分配
@@ -58,5 +79,6 @@ poetry-studio/
 │       └── export-image.ts    # 作品图片绘制
 ├── package.json
 ├── package-lock.json
+├── next.config.ts             # 静态导出与部署路径
 └── tsconfig.json
 ```

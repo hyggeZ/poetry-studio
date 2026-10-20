@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { choosePalette, getPalette } from "@/data/palettes";
 import { localFonts } from "@/data/fonts";
 import { articles, splitArticle, type Article } from "@/data/articles";
@@ -194,10 +195,10 @@ export default function PoetryStudio() {
       }
     >
       <header className="site-header">
-        <a className="brand" href="/" aria-label="拾字成诗首页">
+        <Link className="brand" href="/" aria-label="拾字成诗首页">
           <span className="brand-seal">拾</span>拾字成诗
           <span className="brand-en">FOUND POETRY</span>
-        </a>
+        </Link>
         <label className="font-control">
           字体
           <select
@@ -214,9 +215,9 @@ export default function PoetryStudio() {
             ))}
           </select>
         </label>
-        <a className="guide-link" href="/fonts">
+        <Link className="guide-link" href="/fonts/">
           字体试览 ↗
-        </a>
+        </Link>
       </header>
       <div className="studio-layout">
         <aside className="article-sidebar" aria-label="文章侧栏">

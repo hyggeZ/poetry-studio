@@ -1,4 +1,5 @@
 import { paragraphs } from "./chibi";
+import { modernPoems } from "./modern-poems";
 
 export type Article = {
   id: string;
@@ -8,6 +9,7 @@ export type Article = {
 };
 
 export const articles: Article[] = [
+  ...modernPoems,
   {
     id: "chibi",
     title: "赤壁赋",

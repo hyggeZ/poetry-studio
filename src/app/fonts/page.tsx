@@ -1,4 +1,5 @@
 import { localFonts } from "@/data/fonts";
+import Link from "next/link";
 import "./preview.css";
 
 const candidates = [
@@ -31,7 +32,7 @@ const candidates = [
 export default function FontsPage() {
   return (
     <main className="font-preview">
-      <a href="/">← 返回拾字成诗</a>
+      <Link href="/">← 返回拾字成诗</Link>
       <h1>挑一种文字的模样</h1>
       <p>
         以下四款为免费开源字体候选。这里只加载样例字形，尚未安装到系统字体库。

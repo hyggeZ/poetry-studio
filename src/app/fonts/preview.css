@@ -2,28 +2,28 @@
   font-family: "LXGW WenKai TC";
   font-style: normal;
   font-weight: 400;
-  src: url(/font-previews/wenkai-0.woff2) format("truetype");
+  src: url("../../../public/font-previews/wenkai-0.woff2") format("truetype");
 }
 
 @font-face {
   font-family: "Ma Shan Zheng";
   font-style: normal;
   font-weight: 400;
-  src: url(/font-previews/mashan-0.woff2) format("truetype");
+  src: url("../../../public/font-previews/mashan-0.woff2") format("truetype");
 }
 
 @font-face {
   font-family: "ZCOOL XiaoWei";
   font-style: normal;
   font-weight: 400;
-  src: url(/font-previews/xiaowei-0.woff2) format("truetype");
+  src: url("../../../public/font-previews/xiaowei-0.woff2") format("truetype");
 }
 
 @font-face {
   font-family: "Long Cang";
   font-style: normal;
   font-weight: 400;
-  src: url(/font-previews/longcang-0.woff2) format("truetype");
+  src: url("../../../public/font-previews/longcang-0.woff2") format("truetype");
 }
 
 .font-preview {
