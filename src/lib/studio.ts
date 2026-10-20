@@ -1,5 +1,6 @@
 import { Article, articles, splitArticle } from "@/data/articles";
 import { createExample } from "@/data/chibi";
+import { palettes } from "@/data/palettes";
 import { localFonts } from "@/data/fonts";
 
 export type Point = { x: number; y: number };
@@ -9,6 +10,7 @@ export type Draft = {
   positions: Record<string, Point>;
 };
 export type Studio = {
+  paletteIds: Record<string, string>;
   activeId: string;
   font: string;
   customArticles: Article[];
@@ -21,6 +23,7 @@ export const emptyDraft = (): Draft => ({
   positions: {},
 });
 export const initialStudio = (): Studio => ({
+  paletteIds: {},
   activeId: "chibi",
   font: "SimSun",
   customArticles: [],
@@ -61,6 +64,9 @@ export function restoreStudio(value: unknown): Studio {
   if (all.some((article) => article.id === saved.activeId))
     result.activeId = saved.activeId!;
   for (const article of all) {
+    const paletteId = saved.paletteIds?.[article.id];
+    if (palettes.some((palette) => palette.id === paletteId))
+      result.paletteIds[article.id] = paletteId!;
     const draft = saved.drafts?.[article.id];
     if (!draft || !Array.isArray(draft.poem)) continue;
     const ids = new Set(

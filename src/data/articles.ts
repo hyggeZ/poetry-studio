@@ -42,12 +42,10 @@ export const articles: Article[] = [
 
 // 编号只描述正文位置；每篇文章的草稿独立保存，避免切换后串字。
 export function splitArticle(body: string) {
-  return body
-    .split(/\r?\n/)
-    .map((paragraph, paragraphIndex) =>
-      Array.from(paragraph).map((text, index) => ({
-        id: `${paragraphIndex}-${index}`,
-        text,
-      })),
-    );
+  return body.split(/\r?\n/).map((paragraph, paragraphIndex) =>
+    Array.from(paragraph).map((text, index) => ({
+      id: `${paragraphIndex}-${index}`,
+      text,
+    })),
+  );
 }

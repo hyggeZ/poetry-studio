@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { choosePalette, getPalette } from "@/data/palettes";
 import { localFonts } from "@/data/fonts";
 import { articles, splitArticle, type Article } from "@/data/articles";
 import {
@@ -38,6 +39,7 @@ export default function PoetryStudio() {
     () => new Map(paragraphs.flat().map((letter) => [letter.id, letter.text])),
     [paragraphs],
   );
+  const palette = getPalette(studio.paletteIds[article.id]);
   const draft = studio.drafts[article.id] ?? emptyDraft();
   const selected = new Set(draft.poem);
   const count = draft.poem.filter((id) => id !== "break").length;
@@ -76,6 +78,20 @@ export default function PoetryStudio() {
       setNotice("本地存储空间不足，请先导出作品。");
     }
   }, [studio, ready]);
+
+  useEffect(() => {
+    if (!ready || allArticles.every((item) => studio.paletteIds[item.id]))
+      return;
+    // 配色仅在文章尚未分配时随机一次，刷新和切换都保持原来的组合。
+    setStudio((previous) => {
+      const paletteIds = { ...previous.paletteIds };
+      for (const item of allArticles) {
+        if (!paletteIds[item.id])
+          paletteIds[item.id] = choosePalette(Object.values(paletteIds));
+      }
+      return { ...previous, paletteIds };
+    });
+  }, [ready, allArticles, studio.paletteIds]);
 
   function update(next: Draft) {
     setStudio((previous) => ({
@@ -142,9 +158,10 @@ export default function PoetryStudio() {
         studio.font,
         canvasRef.current,
         scope,
+        palette,
       );
     },
-    [article, draft.poem, studio.font],
+    [article, draft.poem, studio.font, palette],
   );
 
   return (
@@ -169,6 +186,9 @@ export default function PoetryStudio() {
       }}
       style={
         {
+          "--paper": palette.paper,
+          "--blue": palette.canvas,
+          "--poem-ink": palette.ink,
           "--reading-font": `"${studio.font}", "SimSun", serif`,
         } as React.CSSProperties
       }
@@ -212,110 +232,130 @@ export default function PoetryStudio() {
           <small>另有天地</small>
         </div>
       </section>
-      <section className="article-picker" aria-label="创作工具栏">
-        <button disabled={!ready} onClick={() => setPreviewing(true)}>
-          预览
-        </button>
-        <div className="layout-switch" aria-label="排列方式">
-          <button
-            aria-pressed={draft.mode === "flow"}
-            onClick={() => changeMode("flow")}
-          >
-            整齐排列
+      <div className="studio-layout">
+        <aside className="article-sidebar" aria-label="文章侧栏">
+          <button className="new-article" onClick={() => setEditing(true)}>
+            <span>＋</span> 自定义文章
           </button>
-          <button
-            aria-pressed={draft.mode === "free"}
-            onClick={() => changeMode("free")}
-          >
-            自由摆放
-          </button>
-        </div>
-
-        <label>
-          文章
-          <select
-            aria-label="选择文章"
-            value={article.id}
-            onChange={(event) => switchArticle(event.target.value)}
-          >
-            {allArticles.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.title || item.body.slice(0, 16)}
-                {item.author ? ` · ${item.author}` : ""}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button onClick={() => setEditing(true)}>＋ 自定义文字</button>
-      </section>
-      <section className="workspace" aria-label="取字创作台">
-        <article className="source-panel">
-          {(article.title || article.author) && (
-            <div className="article-heading">
-              {article.title && <h2>{article.title}</h2>}
-              {article.author && <span>{article.author}</span>}
-            </div>
-          )}
-          <div
-            ref={sourceRef}
-            className={`article-text ${scrolling ? "is-scrolling" : ""}`}
-            tabIndex={0}
-            aria-label="原文，可上下滚动"
-            onScroll={() => {
-              setScrolling(true);
-              if (scrollTimer.current) clearTimeout(scrollTimer.current);
-              scrollTimer.current = setTimeout(() => setScrolling(false), 800);
-            }}
-          >
-            {paragraphs.map((paragraph, index) => (
-              <p key={index}>
-                {paragraph.length ? (
-                  paragraph.map(({ id, text }) => (
-                    <button
-                      key={id}
-                      className={`source-character ${selected.has(id) ? "taken" : ""}`}
-                      aria-label={`${selected.has(id) ? "归还" : "拾取"}“${text}”，第${index + 1}段`}
-                      aria-pressed={selected.has(id)}
-                      onClick={() => {
-                        update({
-                          ...draft,
-                          poem: selected.has(id)
-                            ? draft.poem.filter((item) => item !== id)
-                            : [...draft.poem, id],
-                          positions:
-                            selected.has(id) || draft.mode === "flow"
-                              ? draft.positions
-                              : {
-                                  ...draft.positions,
-                                  [id]:
-                                    draft.positions[id] ??
-                                    defaultPosition(count),
-                                },
-                        });
-                      }}
-                    >
-                      {text}
-                    </button>
-                  ))
-                ) : (
-                  <br />
-                )}
-              </p>
-            ))}
-          </div>
-        </article>
-        <aside className="poem-panel">
-          <PoemCanvas
-            draft={draft}
-            letters={letters}
-            active={active}
-            onSelect={setActive}
-            onUpdate={update}
-            canvasRef={canvasRef}
-            onAddLine={addLine}
-          />
+          <nav aria-label="文章列表">
+            {allArticles.map((item) => {
+              const colors = getPalette(studio.paletteIds[item.id]);
+              return (
+                <button
+                  key={item.id}
+                  className="article-option"
+                  aria-current={item.id === article.id ? "page" : undefined}
+                  onClick={() => switchArticle(item.id)}
+                >
+                  <span
+                    className="article-swatch"
+                    aria-hidden="true"
+                    style={{
+                      background: `linear-gradient(90deg, ${colors.paper} 50%, ${colors.canvas} 50%)`,
+                    }}
+                  />
+                  <span className="article-option-text">
+                    <strong>{item.title || item.body.slice(0, 12)}</strong>
+                    {item.author && <small>{item.author}</small>}
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
         </aside>
-      </section>
+        <div className="studio-main">
+          <section className="article-picker" aria-label="创作工具栏">
+            <button disabled={!ready} onClick={() => setPreviewing(true)}>
+              预览
+            </button>
+            <div className="layout-switch" aria-label="排列方式">
+              <button
+                aria-pressed={draft.mode === "flow"}
+                onClick={() => changeMode("flow")}
+              >
+                整齐排列
+              </button>
+              <button
+                aria-pressed={draft.mode === "free"}
+                onClick={() => changeMode("free")}
+              >
+                自由摆放
+              </button>
+            </div>
+          </section>
+          <section className="workspace" aria-label="取字创作台">
+            <article className="source-panel">
+              {(article.title || article.author) && (
+                <div className="article-heading">
+                  {article.title && <h2>{article.title}</h2>}
+                  {article.author && <span>{article.author}</span>}
+                </div>
+              )}
+              <div
+                ref={sourceRef}
+                className={`article-text ${scrolling ? "is-scrolling" : ""}`}
+                tabIndex={0}
+                aria-label="原文，可上下滚动"
+                onScroll={() => {
+                  setScrolling(true);
+                  if (scrollTimer.current) clearTimeout(scrollTimer.current);
+                  scrollTimer.current = setTimeout(
+                    () => setScrolling(false),
+                    800,
+                  );
+                }}
+              >
+                {paragraphs.map((paragraph, index) => (
+                  <p key={index}>
+                    {paragraph.length ? (
+                      paragraph.map(({ id, text }) => (
+                        <button
+                          key={id}
+                          className={`source-character ${selected.has(id) ? "taken" : ""}`}
+                          aria-label={`${selected.has(id) ? "归还" : "拾取"}“${text}”，第${index + 1}段`}
+                          aria-pressed={selected.has(id)}
+                          onClick={() => {
+                            update({
+                              ...draft,
+                              poem: selected.has(id)
+                                ? draft.poem.filter((item) => item !== id)
+                                : [...draft.poem, id],
+                              positions:
+                                selected.has(id) || draft.mode === "flow"
+                                  ? draft.positions
+                                  : {
+                                      ...draft.positions,
+                                      [id]:
+                                        draft.positions[id] ??
+                                        defaultPosition(count),
+                                    },
+                            });
+                          }}
+                        >
+                          {text}
+                        </button>
+                      ))
+                    ) : (
+                      <br />
+                    )}
+                  </p>
+                ))}
+              </div>
+            </article>
+            <aside className="poem-panel">
+              <PoemCanvas
+                draft={draft}
+                letters={letters}
+                active={active}
+                onSelect={setActive}
+                onUpdate={update}
+                canvasRef={canvasRef}
+                onAddLine={addLine}
+              />
+            </aside>
+          </section>
+        </div>
+      </div>
       {previewing && (
         <ImagePreview
           title={article.title}

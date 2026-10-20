@@ -1,3 +1,4 @@
+import { type Palette } from "@/data/palettes";
 import { type Article, splitArticle } from "@/data/articles";
 
 type Tile = {
@@ -16,6 +17,7 @@ export async function createImage(
   font: string,
   poem: HTMLElement,
   scope: "full" | "poem",
+  palette: Palette,
 ) {
   await document.fonts.ready;
   const readingFont = `"${font}", "SimSun", serif`;
@@ -71,12 +73,12 @@ export async function createImage(
   const context = canvas.getContext("2d");
   if (!context) throw new Error("浏览器不支持图片绘制");
   context.scale(resolution, resolution);
-  context.fillStyle = "#52667e";
+  context.fillStyle = palette.canvas;
   context.fillRect(0, 0, width, height);
   if (scope === "full") {
-    context.fillStyle = "#f3dfa0";
+    context.fillStyle = palette.paper;
     context.fillRect(0, 0, leftWidth, height);
-    context.fillStyle = "#37372c";
+    context.fillStyle = palette.ink;
     let y = padding;
     context.textBaseline = "top";
     if (article.title) {
@@ -94,10 +96,10 @@ export async function createImage(
       line.forEach((letter, index) => {
         const x = padding + index * fontSize;
         if (selected.has(letter.id)) {
-          context.fillStyle = "#52667e";
+          context.fillStyle = palette.canvas;
           context.fillRect(x, y, fontSize, fontSize + 3);
         } else {
-          context.fillStyle = "#37372c";
+          context.fillStyle = palette.ink;
           context.fillText(letter.text, x, y);
         }
       });
@@ -111,7 +113,7 @@ export async function createImage(
     context.save();
     context.translate(tile.x + tile.width / 2, tile.y + tile.height / 2);
     context.rotate((tile.angle * Math.PI) / 180);
-    context.fillStyle = "#f4dfa0";
+    context.fillStyle = palette.paper;
     context.shadowColor = "#26384b44";
     context.shadowBlur = 3;
     context.shadowOffsetY = 2;
@@ -122,7 +124,7 @@ export async function createImage(
       tile.height,
     );
     context.shadowColor = "transparent";
-    context.fillStyle = "#33382f";
+    context.fillStyle = palette.ink;
     context.font = `24px ${readingFont}`;
     context.textAlign = "center";
     context.textBaseline = "middle";

@@ -930,3 +930,170 @@ h1 span {
   justify-content: flex-end;
   padding-top: 18px;
 }
+
+/* 文章侧栏与作品区保持一套留白、边框和圆角。 */
+.studio-layout {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 24px;
+  max-width: 1440px;
+  margin: 0 auto 40px;
+  padding: 0 32px;
+  align-items: start;
+}
+.article-sidebar {
+  background: #efeee6;
+  border: 1px solid #e1e1d6;
+  border-radius: 7px;
+  padding: 12px;
+  position: sticky;
+  top: 20px;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #d2d3c7 transparent;
+}
+.new-article {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 12px 8px;
+  border: 1px dashed #c6c9b9;
+  border-radius: 4px;
+  background: transparent;
+  color: #636b58;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+.new-article:hover {
+  background: #e5e7db;
+}
+.new-article span {
+  font-size: 18px;
+}
+.article-sidebar nav {
+  display: grid;
+  gap: 6px;
+}
+.article-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 9px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #686f60;
+  text-align: left;
+}
+.article-option:hover {
+  background: #e6e7dc;
+}
+.article-option[aria-current="page"] {
+  background: #faf9f3;
+  border-color: #d8dacd;
+  color: #313b32;
+  box-shadow: 0 2px 4px #39442e08;
+}
+.article-swatch {
+  width: 19px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px #0000000d;
+}
+.article-option-text {
+  min-width: 0;
+}
+.article-option strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.article-option small {
+  display: block;
+  font-size: 10px;
+  color: #919584;
+  margin-top: 4px;
+}
+.studio-main {
+  min-width: 0;
+}
+.studio-main .article-picker {
+  margin: 0 0 16px;
+}
+.studio-main .workspace {
+  margin: 0;
+  grid-template-columns: 1.25fr 1fr;
+}
+.source-character {
+  color: var(--poem-ink);
+}
+.source-character.taken {
+  color: transparent;
+}
+.source-character.taken:hover {
+  color: color-mix(in srgb, var(--paper) 50%, transparent);
+}
+.article-heading {
+  color: var(--poem-ink);
+}
+.article-heading > span {
+  color: color-mix(in srgb, var(--poem-ink) 65%, transparent);
+}
+.poem-panel {
+  background-image: none;
+}
+.poem-tile {
+  background: var(--paper);
+  color: var(--poem-ink);
+}
+.poem-tile:hover,
+.poem-tile.active {
+  background: var(--paper);
+}
+.article-text.is-scrolling {
+  scrollbar-color: color-mix(in srgb, var(--poem-ink) 40%, transparent)
+    transparent;
+}
+.article-text.is-scrolling::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--poem-ink) 40%, transparent);
+}
+@media (max-width: 1100px) {
+  .studio-layout {
+    grid-template-columns: 165px minmax(0, 1fr);
+    gap: 16px;
+    padding: 0 24px;
+  }
+  .studio-main .source-panel,
+  .studio-main .poem-panel {
+    padding: 22px;
+  }
+}
+@media (max-width: 800px) {
+  .studio-layout {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+    gap: 16px;
+  }
+  .article-sidebar {
+    position: static;
+    max-height: 190px;
+  }
+  .article-sidebar nav {
+    display: flex;
+    overflow-x: auto;
+  }
+  .article-option {
+    flex: 0 0 150px;
+  }
+  .new-article {
+    margin-bottom: 8px;
+    width: auto;
+    padding: 7px 12px;
+  }
+}
