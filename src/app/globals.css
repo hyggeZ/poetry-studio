@@ -74,19 +74,7 @@ a {
   color: #777c71;
   margin-left: 10px;
 }
-.header-note {
-  font-size: 12px;
-  color: #8b8c81;
-  margin-left: auto;
-  letter-spacing: 2px;
-}
-.guide-link {
-  font-size: 12px;
-  margin-left: 28px;
-}
-.guide-link span {
-  margin-left: 12px;
-}
+
 .intro {
   max-width: 1440px;
   margin: auto;
@@ -227,15 +215,7 @@ h1 span {
 .source-character.taken:hover {
   color: #f3dfa080;
 }
-.paper-footer {
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid #5d573327;
-  padding-top: 17px;
-  margin-top: 24px;
-  font-size: 9px;
-  color: #8f8056;
-}
+
 .poem-panel {
   background: var(--blue);
   color: #f2ecd8;
@@ -253,15 +233,7 @@ h1 span {
   color: #d2dae2a6;
   border-color: #ffffff25;
 }
-.live-dot:before {
-  content: "";
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  background: #d9d7a2;
-  border-radius: 50%;
-  margin-right: 7px;
-}
+
 .poem-heading {
   display: flex;
   justify-content: space-between;
@@ -279,12 +251,7 @@ h1 span {
   font-size: 10px;
   color: #d2dae29c;
 }
-.poem-description {
-  font-size: 10px;
-  letter-spacing: 0.8px;
-  color: #ced6df88;
-  margin: 13px 0 35px;
-}
+
 .poem-canvas {
   display: flex;
   align-content: flex-start;
@@ -339,26 +306,7 @@ h1 span {
 .line-break button:hover {
   color: #fff;
 }
-.empty-poem {
-  width: 100%;
-  text-align: center;
-  margin: 45px 0;
-  color: #d9e0e29c;
-}
-.empty-poem > span {
-  font-family: "SimSun", serif;
-  font-size: 48px;
-  letter-spacing: 20px;
-  opacity: 0.4;
-}
-.empty-poem p {
-  font-family: "SimSun", serif;
-  font-size: 17px;
-}
-.empty-poem small {
-  font-size: 11px;
-  opacity: 0.65;
-}
+
 .selection-toolbar {
   min-height: 37px;
   display: flex;
@@ -396,34 +344,7 @@ h1 span {
   margin-top: auto;
   padding-top: 45px;
 }
-.copy-button {
-  width: 100%;
-  background: #ede9da;
-  border: 0;
-  border-radius: 3px;
-  color: #46566a;
-  padding: 15px 19px;
-  text-align: left;
-  font-size: 12px;
-  letter-spacing: 2px;
-}
-.copy-button span {
-  float: right;
-  font-size: 16px;
-}
-.copy-button:hover {
-  background: #f9edc9;
-}
-.example-button {
-  display: block;
-  margin: 18px auto 0;
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid #dce4e747;
-  color: #dce4e7a6;
-  font-size: 10px;
-  padding: 0 0 4px;
-}
+
 .save-note {
   font-size: 9px;
   text-align: center;
@@ -431,61 +352,7 @@ h1 span {
   margin: 18px 0 0;
   letter-spacing: 1px;
 }
-.guide {
-  max-width: 1320px;
-  margin: 37px auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 5px;
-}
-.guide-title {
-  font-family: "SimSun", serif;
-  font-size: 19px;
-}
-.guide-title span {
-  display: block;
-  font:
-    10px "Microsoft YaHei",
-    sans-serif;
-  color: #9a9b8e;
-  margin-top: 11px;
-}
-.guide > div:not(:first-child) {
-  display: flex;
-  align-items: flex-start;
-  gap: 13px;
-}
-.guide b {
-  font-family: Georgia, serif;
-  font-size: 22px;
-  font-style: italic;
-  font-weight: 400;
-  color: #b5b8a7;
-}
-.guide p {
-  font-size: 11px;
-  margin: 0;
-  padding-top: 3px;
-}
-.guide small {
-  display: block;
-  font-size: 10px;
-  color: #999d8f;
-  margin-top: 9px;
-}
-.site-footer {
-  max-width: 1320px;
-  margin: auto;
-  padding: 22px 0 25px;
-  border-top: 1px solid #dfdfd5;
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  font-size: 9px;
-  letter-spacing: 1px;
-  color: #9a9e90;
-}
+
 @keyframes arrive {
   from {
     opacity: 0;
@@ -707,5 +574,226 @@ h1 span {
 @media (max-width: 700px) {
   .article-text {
     height: 400px;
+  }
+}
+
+/* 顶栏统一管理字体，文章选择不占用原文的阅读高度。 */
+.site-header .font-control {
+  margin: 0 0 0 auto;
+  color: #686955;
+}
+.site-header {
+  flex-wrap: wrap;
+}
+.article-picker {
+  max-width: 1320px;
+  margin: 0 auto 18px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.article-picker label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+.article-picker select {
+  max-width: 420px;
+}
+.article-picker select,
+.article-picker button {
+  border: 1px solid #d5d5c7;
+  border-radius: 4px;
+  padding: 10px 14px;
+  background: #f7f6f0;
+  color: #505546;
+  font: inherit;
+  font-size: 12px;
+}
+.article-text {
+  margin-top: 20px;
+  scrollbar-color: transparent transparent;
+  white-space: pre-wrap;
+}
+.article-text.is-scrolling {
+  scrollbar-color: #a48b51 transparent;
+}
+.article-text::-webkit-scrollbar {
+  width: 6px;
+}
+.article-text::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+}
+.article-text.is-scrolling::-webkit-scrollbar-thumb {
+  background: #a48b51;
+}
+.layout-switch {
+  display: flex;
+  gap: 4px;
+  margin: 18px 0;
+}
+.layout-switch button {
+  color: #d9e0e5;
+  border: 1px solid #ffffff30;
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+.layout-switch button[aria-pressed="true"] {
+  background: #ede9da;
+  color: #46566a;
+}
+.poem-canvas {
+  position: relative;
+}
+.free-canvas {
+  display: block;
+  height: 480px;
+  min-height: 480px;
+  padding: 0;
+}
+.free-canvas .poem-tile {
+  position: absolute;
+  width: 40px;
+  height: 44px;
+  touch-action: none;
+  user-select: none;
+}
+.free-canvas .poem-tile.active {
+  z-index: 1;
+}
+.export-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: #e4e9e2;
+}
+.export-options select {
+  background: #ede9da;
+  color: #46566a;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 3px;
+  font: inherit;
+}
+.export-button {
+  width: 100%;
+  background: #ede9da;
+  border: 0;
+  border-radius: 3px;
+  color: #46566a;
+  padding: 15px 19px;
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+.export-button span {
+  float: right;
+}
+.article-dialog {
+  width: min(560px, calc(100% - 32px));
+  padding: 28px;
+  border: 0;
+  border-radius: 8px;
+  color: #343c31;
+  background: #f7f6f0;
+  max-height: 90vh;
+}
+.article-dialog::backdrop {
+  background: #23314577;
+}
+.dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.dialog-heading h2 {
+  margin: 0;
+  font-size: 22px;
+}
+.dialog-heading button {
+  border: 0;
+  background: transparent;
+  font-size: 25px;
+}
+.article-dialog label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.article-dialog input,
+.article-dialog textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ced0c2;
+  border-radius: 4px;
+  font: inherit;
+  background: white;
+}
+.article-dialog textarea {
+  resize: vertical;
+  line-height: 1.7;
+}
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+}
+.dialog-actions button {
+  padding: 10px 18px;
+  border: 1px solid #ccd0c2;
+  border-radius: 4px;
+  background: #e8e6d7;
+}
+@media (max-width: 1400px) {
+  .article-picker {
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+}
+@media (max-width: 700px) {
+  .site-header {
+    height: auto;
+    min-height: 90px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    gap: 12px;
+  }
+  .site-header .font-control {
+    font-size: 11px;
+    gap: 5px;
+  }
+  .site-header .font-control select {
+    padding: 6px;
+    max-width: 120px;
+  }
+  .guide-link {
+    margin-left: auto;
+  }
+  .article-picker {
+    margin: 0 16px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .article-picker label {
+    min-width: 0;
+    flex: 1;
+  }
+  .article-picker select {
+    max-width: 100%;
+    min-width: 0;
+    flex: 1;
+  }
+  .article-picker button {
+    white-space: nowrap;
   }
 }
