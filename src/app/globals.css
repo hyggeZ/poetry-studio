@@ -797,3 +797,136 @@ h1 span {
     white-space: nowrap;
   }
 }
+
+/* 作品框只保留正文与纸片，工具集中在框外同一行。 */
+.article-picker {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.article-picker .layout-switch {
+  margin: 0;
+}
+.article-picker .layout-switch button {
+  color: #797d70;
+  background: transparent;
+  border-color: #d5d5c7;
+}
+.article-picker .layout-switch button[aria-pressed="true"] {
+  background: #52667e;
+  color: #f7f3e6;
+  border-color: #52667e;
+}
+.toolbar-export {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  align-items: center;
+}
+.toolbar-export .export-options {
+  margin: 0;
+}
+.toolbar-export .export-button {
+  width: auto;
+  white-space: nowrap;
+  letter-spacing: 0;
+}
+.toolbar-export .export-button span {
+  margin-left: 10px;
+}
+.poem-panel {
+  padding: 28px 32px;
+}
+.poem-canvas {
+  min-height: 480px;
+}
+.poem-canvas:focus {
+  outline: none;
+}
+.poem-canvas:focus-visible {
+  outline: 1px solid #ffffff30;
+  outline-offset: 6px;
+}
+.newline-control {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 41px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #edf1f31a;
+  font-size: 21px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.newline-control:hover,
+.newline-control:focus-visible {
+  color: #edf1f3c9;
+}
+.line-break {
+  flex-basis: 100%;
+  height: 0;
+}
+@media (max-width: 700px) {
+  .toolbar-export {
+    margin-left: 0;
+  }
+  .poem-panel {
+    padding: 24px;
+  }
+}
+
+/* 图片预览与创作画布分开，保存结果与当前预览完全一致。 */
+.image-dialog {
+  width: min(900px, calc(100% - 32px));
+  max-height: 90dvh;
+  padding: 24px;
+  border: 0;
+  border-radius: 8px;
+  color: #343c31;
+  background: #f7f6f0;
+}
+.image-dialog::backdrop {
+  background: #23314588;
+}
+.preview-scope {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.preview-scope button,
+.preview-actions button {
+  border: 1px solid #d5d5c7;
+  border-radius: 4px;
+  padding: 9px 18px;
+  font-size: 13px;
+  background: transparent;
+  color: #526052;
+}
+.preview-scope button[aria-pressed="true"],
+.preview-actions button {
+  background: #52667e;
+  border-color: #52667e;
+  color: #fff9e6;
+}
+.preview-image {
+  min-height: 180px;
+  max-height: 60dvh;
+  overflow: auto;
+  background: #e7e8e1;
+  text-align: center;
+}
+.preview-image img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+.preview-image p {
+  padding: 40px 16px;
+  font-size: 13px;
+}
+.preview-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 18px;
+}

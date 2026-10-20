@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { localFonts } from "@/data/fonts";
 import { articles, splitArticle, type Article } from "@/data/articles";
 import {
@@ -11,19 +11,18 @@ import {
   defaultPosition,
   type Draft,
 } from "@/lib/studio";
-import { exportImage } from "@/lib/export-image";
+import { createImage } from "@/lib/export-image";
+import ImagePreview from "./image-preview";
 import ArticleEditor from "./article-editor";
 import PoemCanvas from "./poem-canvas";
 
 export default function PoetryStudio() {
   const [studio, setStudio] = useState(initialStudio);
-  const [history, setHistory] = useState<Draft[]>([]);
   const [ready, setReady] = useState(false);
   const [notice, setNotice] = useState("");
   const [active, setActive] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
-  const [exporting, setExporting] = useState(false);
-  const [scope, setScope] = useState<"full" | "poem">("poem");
+  const [previewing, setPreviewing] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sourceRef = useRef<HTMLDivElement>(null);
@@ -79,7 +78,6 @@ export default function PoetryStudio() {
   }, [studio, ready]);
 
   function update(next: Draft) {
-    setHistory((previous) => [...previous.slice(-49), draft]);
     setStudio((previous) => ({
       ...previous,
       drafts: { ...previous.drafts, [article.id]: next },
@@ -89,7 +87,6 @@ export default function PoetryStudio() {
 
   function switchArticle(id: string) {
     setStudio((previous) => ({ ...previous, activeId: id }));
-    setHistory([]);
     setActive(null);
     setNotice("");
     sourceRef.current?.scrollTo({ top: 0 });
@@ -101,7 +98,6 @@ export default function PoetryStudio() {
       customArticles: [...previous.customArticles, item],
       activeId: item.id,
     }));
-    setHistory([]);
     setActive(null);
     setEditing(false);
     sourceRef.current?.scrollTo({ top: 0 });
@@ -131,38 +127,46 @@ export default function PoetryStudio() {
     update({ ...draft, mode, positions });
   }
 
-  function moveActive(offset: number) {
-    const index = draft.poem.indexOf(active ?? "");
-    if (index < 0 || index + offset < 0 || index + offset >= draft.poem.length)
-      return;
-    const poem = [...draft.poem];
-    const [id] = poem.splice(index, 1);
-    poem.splice(index + offset, 0, id);
-    update({ ...draft, poem });
-    setActive(id);
+  function addLine() {
+    if (draft.mode !== "flow" || !count) return;
+    update({ ...draft, poem: [...draft.poem, "break"] });
+    canvasRef.current?.focus({ preventScroll: true });
   }
 
-  async function download() {
-    if (!canvasRef.current) return;
-    setExporting(true);
-    try {
-      await exportImage(
+  const generateImage = useCallback(
+    async (scope: "full" | "poem") => {
+      if (!canvasRef.current) throw new Error("画布尚未就绪");
+      return createImage(
         article,
-        selected,
+        new Set(draft.poem),
         studio.font,
         canvasRef.current,
         scope,
       );
-      setNotice("图片已生成。");
-    } catch {
-      setNotice("图片导出失败，请重试。");
-    } finally {
-      setExporting(false);
-    }
-  }
+    },
+    [article, draft.poem, studio.font],
+  );
 
   return (
     <main
+      onKeyDown={(event) => {
+        // 仅在取字或画布区域响应回车，不干扰下拉菜单和自定义正文输入。
+        if (
+          event.key !== "Enter" ||
+          event.repeat ||
+          event.nativeEvent.isComposing
+        )
+          return;
+        const target = event.target as HTMLElement;
+        if (
+          draft.mode === "flow" &&
+          target.closest(".source-character, .poem-canvas") &&
+          !target.closest(".newline-control")
+        ) {
+          event.preventDefault();
+          addLine();
+        }
+      }}
       style={
         {
           "--reading-font": `"${studio.font}", "SimSun", serif`,
@@ -208,7 +212,25 @@ export default function PoetryStudio() {
           <small>另有天地</small>
         </div>
       </section>
-      <section className="article-picker" aria-label="文章选择">
+      <section className="article-picker" aria-label="创作工具栏">
+        <button disabled={!ready} onClick={() => setPreviewing(true)}>
+          预览
+        </button>
+        <div className="layout-switch" aria-label="排列方式">
+          <button
+            aria-pressed={draft.mode === "flow"}
+            onClick={() => changeMode("flow")}
+          >
+            整齐排列
+          </button>
+          <button
+            aria-pressed={draft.mode === "free"}
+            onClick={() => changeMode("free")}
+          >
+            自由摆放
+          </button>
+        </div>
+
         <label>
           文章
           <select
@@ -228,10 +250,6 @@ export default function PoetryStudio() {
       </section>
       <section className="workspace" aria-label="取字创作台">
         <article className="source-panel">
-          <div className="panel-label">
-            <span>01 / 拾字</span>
-            <span>点击文字，收入诗中 ↘</span>
-          </div>
           {(article.title || article.author) && (
             <div className="article-heading">
               {article.title && <h2>{article.title}</h2>}
@@ -287,27 +305,6 @@ export default function PoetryStudio() {
           </div>
         </article>
         <aside className="poem-panel">
-          <div className="panel-label">
-            <span>02 / 成诗</span>
-          </div>
-          <div className="poem-heading">
-            <h2>我的拾字诗</h2>
-            <span>{String(count).padStart(2, "0")} 字</span>
-          </div>
-          <div className="layout-switch" aria-label="排列方式">
-            <button
-              aria-pressed={draft.mode === "flow"}
-              onClick={() => changeMode("flow")}
-            >
-              整齐排列
-            </button>
-            <button
-              aria-pressed={draft.mode === "free"}
-              onClick={() => changeMode("free")}
-            >
-              自由摆放
-            </button>
-          </div>
           <PoemCanvas
             draft={draft}
             letters={letters}
@@ -315,110 +312,17 @@ export default function PoetryStudio() {
             onSelect={setActive}
             onUpdate={update}
             canvasRef={canvasRef}
+            onAddLine={addLine}
           />
-          <div className="selection-toolbar">
-            {active ? (
-              <>
-                <span>「{letters.get(active)}」</span>
-                {draft.mode === "flow" && (
-                  <>
-                    <button
-                      disabled={draft.poem.indexOf(active) === 0}
-                      onClick={() => moveActive(-1)}
-                    >
-                      ← 前移
-                    </button>
-                    <button
-                      disabled={
-                        draft.poem.indexOf(active) === draft.poem.length - 1
-                      }
-                      onClick={() => moveActive(1)}
-                    >
-                      后移 →
-                    </button>
-                  </>
-                )}
-                <button
-                  onClick={() =>
-                    update({
-                      ...draft,
-                      poem: draft.poem.filter((id) => id !== active),
-                    })
-                  }
-                >
-                  归还原文
-                </button>
-              </>
-            ) : (
-              <span>
-                {draft.mode === "free"
-                  ? "拖动自由摆放 · 双击归还"
-                  : "拖动排序 · 双击归还"}
-              </span>
-            )}
-          </div>
-          <div className="poem-actions">
-            {draft.mode === "flow" && (
-              <button
-                disabled={!count || draft.poem.at(-1) === "break"}
-                onClick={() =>
-                  update({ ...draft, poem: [...draft.poem, "break"] })
-                }
-              >
-                ↵ 换一行
-              </button>
-            )}
-            <button
-              disabled={!history.length}
-              onClick={() => {
-                setStudio({
-                  ...studio,
-                  drafts: {
-                    ...studio.drafts,
-                    [article.id]: history[history.length - 1],
-                  },
-                });
-                setHistory(history.slice(0, -1));
-                setActive(null);
-              }}
-            >
-              ↶ 撤销
-            </button>
-            <button
-              disabled={!draft.poem.length}
-              onClick={() => update({ ...emptyDraft(), mode: draft.mode })}
-            >
-              重新拾字
-            </button>
-          </div>
-          <div className="poem-bottom">
-            <label className="export-options">
-              导出范围
-              <select
-                aria-label="导出范围"
-                value={scope}
-                onChange={(event) =>
-                  setScope(event.target.value as "full" | "poem")
-                }
-              >
-                <option value="poem">仅右侧诗作</option>
-                <option value="full">左右完整作品</option>
-              </select>
-            </label>
-            <button
-              className="export-button"
-              disabled={!ready || exporting}
-              onClick={download}
-            >
-              {exporting ? "正在生成…" : "导出图片"}
-              <span>↓</span>
-            </button>
-            <p className="save-note">
-              {ready ? "每篇文章的草稿自动保存在当前浏览器" : "正在打开草稿…"}
-            </p>
-          </div>
         </aside>
       </section>
+      {previewing && (
+        <ImagePreview
+          title={article.title}
+          generate={generateImage}
+          onClose={() => setPreviewing(false)}
+        />
+      )}
       {editing && (
         <ArticleEditor onSave={addArticle} onClose={() => setEditing(false)} />
       )}

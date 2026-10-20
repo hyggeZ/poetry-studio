@@ -10,7 +10,7 @@ type Tile = {
 };
 
 // 只绘制作品数据和纸片，不截取操作界面；全文导出不受左侧滚动位置影响。
-export async function exportImage(
+export async function createImage(
   article: Article,
   selected: Set<string>,
   font: string,
@@ -137,10 +137,5 @@ export async function exportImage(
       "image/png",
     ),
   );
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `${(article.title || "拾字诗").replace(/[\\/:*?"<>|]/g, "-")}-${scope === "full" ? "完整作品" : "诗作"}.png`;
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return blob;
 }

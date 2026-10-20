@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type RefObject } from "react";
+import { Fragment, useRef, useState, type RefObject } from "react";
 import { clamp, defaultPosition, type Draft, type Point } from "@/lib/studio";
 
 type Props = {
@@ -10,6 +10,7 @@ type Props = {
   onSelect: (id: string | null) => void;
   onUpdate: (draft: Draft) => void;
   canvasRef: RefObject<HTMLDivElement | null>;
+  onAddLine: () => void;
 };
 
 export default function PoemCanvas({
@@ -19,6 +20,7 @@ export default function PoemCanvas({
   onSelect,
   onUpdate,
   canvasRef,
+  onAddLine,
 }: Props) {
   const drag = useRef<{
     id: string;
@@ -45,14 +47,17 @@ export default function PoemCanvas({
   return (
     <div
       ref={canvasRef}
+      tabIndex={0}
       className={`poem-canvas ${free ? "free-canvas" : ""}`}
       aria-label="诗句排列区"
     >
       {draft.poem.map((id, index) => {
         if (id === "break")
           return free ? null : (
-            <div className="line-break" key={`break-${index}`}>
+            <Fragment key={`break-${index}`}>
               <button
+                className="newline-control"
+                title="删除换行"
                 aria-label="删除换行"
                 onClick={() =>
                   onUpdate({
@@ -65,7 +70,8 @@ export default function PoemCanvas({
               >
                 ↵
               </button>
-            </div>
+              <div className="line-break" />
+            </Fragment>
           );
         const point =
           preview?.id === id
@@ -207,6 +213,16 @@ export default function PoemCanvas({
           </button>
         );
       })}
+      {!free && draft.poem.length > 0 && (
+        <button
+          className="newline-control"
+          aria-label="换行"
+          title="换行（Enter）"
+          onClick={onAddLine}
+        >
+          ↵
+        </button>
+      )}
     </div>
   );
 }
