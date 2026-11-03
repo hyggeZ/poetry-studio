@@ -26,6 +26,7 @@ export default function PoetryStudio() {
   const [editing, setEditing] = useState(false);
   const [previewing, setPreviewing] = useState(false);
   const [scrolling, setScrolling] = useState(false);
+  const [pageHint, setPageHint] = useState("");
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sourceRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -106,7 +107,7 @@ export default function PoetryStudio() {
     setStudio((previous) => ({ ...previous, activeId: id }));
     setActive(null);
     setNotice("");
-    sourceRef.current?.scrollTo({ top: 0 });
+    sourceRef.current?.scrollTo({ top: 0, left: 0 });
   }
 
   function addArticle(item: Article) {
@@ -117,7 +118,7 @@ export default function PoetryStudio() {
     }));
     setActive(null);
     setEditing(false);
-    sourceRef.current?.scrollTo({ top: 0 });
+    sourceRef.current?.scrollTo({ top: 0, left: 0 });
   }
 
   function changeMode(mode: Draft["mode"]) {
@@ -303,16 +304,26 @@ export default function PoetryStudio() {
                 ref={sourceRef}
                 className={`article-text ${scrolling ? "is-scrolling" : ""}`}
                 tabIndex={0}
-                aria-label="原文，可上下滚动"
-                onScroll={() => {
+                aria-label="原文阅读区"
+                onScroll={(event) => {
+                  const view = event.currentTarget;
+                  const width = view.clientWidth || 1;
+                  const pages = Math.round(view.scrollWidth / width);
+                  setPageHint(pages > 1 ? (Math.round(view.scrollLeft / width) + 1) + " / " + pages : "");
                   setScrolling(true);
                   if (scrollTimer.current) clearTimeout(scrollTimer.current);
                   scrollTimer.current = setTimeout(
-                    () => setScrolling(false),
+                    () => {
+                      if (pages > 1 && view.clientWidth === width) {
+                        view.scrollLeft = Math.round(view.scrollLeft / width) * width;
+                      }
+                      setScrolling(false);
+                    },
                     800,
                   );
                 }}
               >
+                <div className="reading-pages">
                 {paragraphs.map((paragraph, index) => (
                   <p key={index}>
                     {paragraph.length ? (
@@ -348,7 +359,9 @@ export default function PoetryStudio() {
                     )}
                   </p>
                 ))}
+                </div>
               </div>
+              {scrolling && pageHint && <span className="page-hint">{pageHint}</span>}
             </article>
             <aside className="poem-panel">
               <PoemCanvas

@@ -1245,3 +1245,14 @@ h1 span {
   .studio-main .article-heading { flex-direction:row; align-items:baseline; }
   .studio-main .article-picker button { min-height:44px; }
 }
+.page-hint { display:none; }
+@media (max-width:767px) and (orientation:portrait) {
+  .studio-main .source-panel { position:relative; padding:14px 16px; }
+  .studio-main .article-heading h2 { font-size:19px; }
+  .studio-main .article-text { height:32dvh; max-height:none; padding:0; margin-top:8px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; scroll-snap-type:x mandatory; overscroll-behavior-y:auto; }
+  .studio-main .article-text::-webkit-scrollbar { display:none; }
+  /* 固定栏高，浏览器按实际字形将剩余诗行排入下一屏。 */
+  .reading-pages { height:100%; column-width:100vw; column-count:1; column-gap:0; column-fill:auto; }
+  .studio-main .article-text p { font-size:16px; line-height:1.55; margin:0 0 3px; text-indent:0; text-align:start; orphans:1; widows:1; }
+  .page-hint { display:block; position:absolute; right:12px; bottom:1px; font:10px/1.2 sans-serif; opacity:.65; pointer-events:none; }
+}
