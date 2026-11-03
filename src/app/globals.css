@@ -1230,3 +1230,18 @@ h1 span {
     font-size: 11px;
   }
 }
+/* 手机竖屏使用独立选篇栏，原文与画布共享整行宽度。 */
+.phone-library { display: none; }
+@media (max-width: 767px) and (orientation: portrait) {
+  .studio-layout { display: block; }
+  .article-sidebar, .studio-main .intro { display: none; }
+  .phone-library { display:flex; align-items:center; gap:12px; padding:8px 16px; border-bottom:1px solid #d9d6ca; }
+  .phone-library select, .phone-library button { font:inherit; color:inherit; background:transparent; min-height:44px; border:0; }
+  .phone-library select { flex:1; min-width:0; }
+  .studio-main { padding:0 12px 24px; }
+  .studio-main .workspace { display:flex; flex-direction:column; width:100%; }
+  .studio-main .source-panel, .studio-main .poem-panel { width:100%; min-width:0; min-height:0; }
+  .studio-main .article-text { max-height:30dvh; overflow-y:auto; }
+  .studio-main .article-heading { flex-direction:row; align-items:baseline; }
+  .studio-main .article-picker button { min-height:44px; }
+}

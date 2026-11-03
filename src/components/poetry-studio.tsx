@@ -220,6 +220,12 @@ export default function PoetryStudio() {
         </Link>
       </header>
       <div className="studio-layout">
+        <nav className="phone-library" aria-label="手机选篇">
+          <select aria-label="选择文章" value={article.id} onChange={e => switchArticle(e.target.value)}>
+            {allArticles.map(item => <option key={item.id} value={item.id}>{item.title || item.body.slice(0,12)}{item.author ? " · " + item.author : ""}</option>)}
+          </select>
+          <button onClick={() => setEditing(true)}>＋ 自定义</button>
+        </nav>
         <aside className="article-sidebar" aria-label="文章侧栏">
           <button className="new-article" onClick={() => setEditing(true)}>
             <span>＋</span> 自定义文章
